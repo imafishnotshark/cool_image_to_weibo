@@ -1,3 +1,6 @@
+# !/usr/bin/python 
+# -*-coding:utf-8 -*- 
+
 from bs4 import BeautifulSoup
 import requests
 import time
@@ -40,7 +43,7 @@ def weibo_upload(image_name):
         "status": "test http://www.weibo.com/",  # 微博内容，一定加个人账号的微博安全地址
     }
     files = {
-        "pic": open("images" + image_name, "rb"),
+        "pic": open("images/" + image_name, "rb"),
     }
 
     requests.post(url, data=payload, files=files)
@@ -52,7 +55,7 @@ def weibo_upload(image_name):
 def main():
     while True:
         with open("image_history.txt", "rb") as f:
-            image_number = f.read()[:-4]
+            image_number = str(f.read().decode("utf-8"))[:-4]  # read为byte格式，需要转化为str，解码为utf-8格式
             print("获得image_number为" + image_number)
 
         # 将image_number传入download_image函数，返回image_name

@@ -1,5 +1,5 @@
-# !/usr/bin/python 
-# -*-coding:utf-8 -*- 
+# !/usr/bin/python
+# -*-coding:utf-8 -*-
 
 from bs4 import BeautifulSoup
 import requests
@@ -38,16 +38,26 @@ def weibo_upload(image_name):
     # 微博的api
     url = "https://api.weibo.com/2/statuses/share.json"
 
+    # 将image_name分为数字和后缀
+    image_name_number, image_name_suffix = image_name[:-4], image_name[-4:]
+
+    # 微博标题为图片数字-100
+    weibo_title = str(int(image_name_number) - 100)
+
     payload = {
         "access_token": "2.00UNgkiH3dxuNE100c227e36rOWlGB",
-        "status": "test http://www.weibo.com/",  # 微博内容，一定加个人账号的微博安全地址
+        "status": weibo_title + "http://www.weibo.com/",  # 微博内容，一定加个人账号的微博安全地址
     }
     files = {
         "pic": open("images/" + image_name, "rb"),
     }
 
+    # 数字+1，转换成str，准备储存到imgae_history.txt中
+    image_name_number = int(image_name_number) + 1
+    image_name = str(image_name_number) + image_name_suffix
+
     requests.post(url, data=payload, files=files)
-    print("已成功上传" + image_name)
+    print("已成功上传" + "，微博标题为" + weibo_title)
     with open("image_history.txt", "wb") as f:
         f.write(image_name)
 
@@ -55,7 +65,8 @@ def weibo_upload(image_name):
 def main():
     while True:
         with open("image_history.txt", "rb") as f:
-            image_number = str(f.read().decode("utf-8"))[:-4]  # read为byte格式，需要转化为str，解码为utf-8格式
+            # read为byte格式，需要转化为str，解码为utf-8格式
+            image_number = str(f.read().decode("utf-8"))[:-4]
             print("获得image_number为" + image_number)
 
         # 将image_number传入download_image函数，返回image_name
@@ -64,7 +75,7 @@ def main():
         weibo_upload(image_name)
 
         # 每次上传后睡眠30分钟，首先测试半分钟
-        time.sleep(30)
+        time.sleep(1800)
 
 
 if __name__ == "__main__":
